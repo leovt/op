@@ -67,12 +67,12 @@ class Terrain:
         print('+' + width*'-------+')
 
     def vertex_data(self):
+        u = [1,0,0,1]
+        v = [1,1,0,0]
         for x, col in enumerate(self.vertex_height):
             for y, tile in enumerate(col):
-                yield x+1, y+1, tile[0]
-                yield x, y+1, tile[1]
-                yield x, y, tile[2]
-                yield x+1, y, tile[3]
+                for c in range(4):
+                    yield x, y, tile[c], c, u[c], v[c]
     def nb_vertices(self):
         return 4*self.width*self.depth
 
