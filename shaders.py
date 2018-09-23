@@ -13,7 +13,7 @@ void main()
 {
 
     gl_Position = vec4((position.x-position.y)/5.0,
-                       (position.x+position.y+position.z)/10.0-0.5,
+                       (position.x+position.y+position.z*0.7)/10.0-0.5,
                        (position.x+position.y)/10.0,
                        position.w);
     vtx_color = color;
