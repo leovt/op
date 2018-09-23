@@ -71,10 +71,43 @@ class Terrain:
         v = [1,1,0,0]
         for x, col in enumerate(self.vertex_height):
             for y, tile in enumerate(col):
-                for c in range(4):
-                    yield x, y, tile[c], c, u[c], v[c]
+                shape, level, corner = tile_shape(list(tile))
+                for c in [corner-1, corner, corner+1, corner+1, corner+2, corner+3]:
+                    yield x, y, tile[c%4], c%4, u[c%4], v[c%4]
+
     def nb_vertices(self):
-        return 4*self.width*self.depth
+        return 6*self.width*self.depth
+
+TILE_FLAT = 0     # 0000
+TILE_ONE_UP = 1   # 1000
+TILE_ONE_DOWN = 2 # 0111
+TILE_PARALLEL = 3 # 1100
+TILE_STEEP = 4    # 0121
+TILE_FOLD = 5     # 1010
+
+def tile_shape(tile):
+    a,b,c,d = tile
+    M = max(a,b,c,d)
+    m = min(a,b,c,d)
+    if m==M:
+        return TILE_FLAT, a, 0
+    if m==M-2:
+        i = tile.index(m)
+        assert tile[(i+2)%4] == M
+        return TILE_STEEP, m+1, i
+    assert m==M-1
+    n = tile.count(m)
+    if n==1:
+        return TILE_ONE_DOWN, M, tile.index(m)
+    if n==3:
+        return TILE_ONE_UP, m, tile.index(M)
+    assert n==2
+    i = tile.index(m)
+    if tile[(i+1)%4] == m:
+        return TILE_PARALLEL, m, i
+    if tile[(i-1)%4] == m:
+        return TILE_PARALLEL, m, (i-1)%4
+    return TILE_FOLD, m, i+1
 
 if __name__ == '__main__':
     t = Terrain(4,3)

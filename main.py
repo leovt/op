@@ -52,7 +52,7 @@ class Application:
 
         data = (gl.GLfloat * (STRIDE * self.terrain.nb_vertices()))(*data)
         gl.glBufferData(gl.GL_ARRAY_BUFFER, ctypes.sizeof(data), data, gl.GL_DYNAMIC_DRAW)
-        gl.glDrawArrays(gl.GL_QUADS, 0, self.terrain.nb_vertices())
+        gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.terrain.nb_vertices())
 
     def on_key_press(self, symbol, modifiers):
         logging.debug('Key Press {} {}'.format(symbol, modifiers))
