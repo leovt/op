@@ -46,8 +46,8 @@ class Application:
         self.program.vertex_attrib_pointer(self.buffer, b"color", 4, stride=STRIDE * ctypes.sizeof(gl.GLfloat), offset=4 * ctypes.sizeof(gl.GLfloat))
 
         data = ( float(d)
-            for (x,y,z,c,u,v) in self.terrain.vertex_data()
-            for d in ((x+u,y+v,z,1, 1.0,1.0,1.0,1.0) if (x,y,c)==self.pointed else (x+u,y+v,z,1, u*0.3,0.5,v*0.4,1.0))
+            for (x,y,z,c,u,v,(r,g,b,a)) in self.terrain.vertex_data()
+            for d in ((x+u,y+v,z,1, 1.0,1.0,1.0,1.0) if (x,y,c)==self.pointed else (x+u,y+v,z,1, r,g,b,a))
         )
 
         data = (gl.GLfloat * (STRIDE * self.terrain.nb_vertices()))(*data)
