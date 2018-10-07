@@ -9,6 +9,9 @@ const float VOXEL_HEIGHT = 24.0;
 const float VOXEL_Y_SIDE = 24.0;
 const float VOXEL_X_SIDE = 48.0;
 
+uniform vec2 screen_size;
+uniform vec2 scroll_offset;
+
 void main()
 {
 
@@ -29,5 +32,18 @@ out vec4 FragColor;
 void main()
 {
     FragColor = vtx_color;
+}
+'''
+
+fragment_sprite = b'''
+#version 130
+
+uniform sampler2D tex;
+varying vec4 vtx_color;
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = texture2D(tex, vtx_color.xy);
 }
 '''

@@ -33,6 +33,7 @@ class Terrain:
         self.width = width
         self.depth = depth
         self.vertex_height = np.zeros((width, depth, 4), dtype=np.int8)
+        self.dirty = True
 
     def move_corner(self, x, y, corner, amount):
         if not amount:
@@ -48,6 +49,7 @@ class Terrain:
             c = min(c, a+2)
             d = min(d, a+1)
         self.vertex_height[x,y] = np.roll(np.array([a,b,c,d]), corner)
+        self.dirty = True
 
     def debug(self):
         width = min(self.width, 10)
@@ -68,16 +70,23 @@ class Terrain:
                 + '|')
         print('+' + width*'-------+')
 
+    def vertex_data_tile(self, x, y):
+        u = [1,0,0,1]
+        v = [1,1,0,0]
+        tile = self.vertex_height[x,y]
+        shape, level, corner = tile_shape(list(tile))
+        for c in [corner-1, corner, corner+1]:
+            yield x, y, tile[c%4], c%4, u[c%4], v[c%4], (0.0, 0.5, 0.0, 1.0), shading.get(shape, [(0.8,0.8)]*4)[corner][0]
+        for c in [corner+1, corner+2, corner+3]:
+            yield x, y, tile[c%4], c%4, u[c%4], v[c%4], (0.0, 0.5, 0.0, 1.0), shading.get(shape, [(0.8,0.8)]*4)[corner][1]
+
     def vertex_data(self):
+        self.dirty = False
         u = [1,0,0,1]
         v = [1,1,0,0]
         for x, col in enumerate(self.vertex_height):
             for y, tile in enumerate(col):
-                shape, level, corner = tile_shape(list(tile))
-                for c in [corner-1, corner, corner+1]:
-                    yield x, y, tile[c%4], c%4, u[c%4], v[c%4], (0.0, 0.5, 0.0, 1.0), shading.get(shape, [(0.8,0.8)]*4)[corner][0]
-                for c in [corner+1, corner+2, corner+3]:
-                    yield x, y, tile[c%4], c%4, u[c%4], v[c%4], (0.0, 0.5, 0.0, 1.0), shading.get(shape, [(0.8,0.8)]*4)[corner][1]
+                yield from self.vertex_data_tile(x,y)
 
                 if x == 0:
                     neighbour = (-10,-10,-10,-10)
@@ -100,8 +109,6 @@ class Terrain:
                 yield x, y-1, neighbour[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.9
                 yield x, y-1, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.9
                 yield x, y, tile[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.9
-
-
 
     def nb_vertices(self):
         return 18*self.width*self.depth
