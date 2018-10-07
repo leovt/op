@@ -66,14 +66,14 @@ class Application:
         self.program.vertex_attrib_pointer(self.buffer, b"color", 4, stride=STRIDE * ctypes.sizeof(gl.GLfloat), offset=4 * ctypes.sizeof(gl.GLfloat))
 
         if self.terrain.dirty or not self._cached_terrain_data:
-            self._cached_terrain_data = list(self.terrain.vertex_data())
-
-        data = ( float(d)
-            for (x,y,z,c,u,v,(r,g,b,a),lum) in self._cached_terrain_data
-            for d in (x+u,y+v,z,1, r*lum,g*lum,b*lum,a)
-        )
-        data = (gl.GLfloat * (STRIDE * self.terrain.nb_vertices()))(*data)
-
+            data = ( float(d)
+                for (x,y,z,c,u,v,(r,g,b,a),lum) in self.terrain.vertex_data()
+                for d in (x+u,y+v,z,1, r*lum,g*lum,b*lum,a)
+            )
+            data = (gl.GLfloat * (STRIDE * self.terrain.nb_vertices()))(*data)
+            self._cached_terrain_data = data
+        else:
+            data = self._cached_terrain_data
         gl.glBufferData(gl.GL_ARRAY_BUFFER, ctypes.sizeof(data), data, gl.GL_DYNAMIC_DRAW)
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.terrain.nb_vertices())
 
