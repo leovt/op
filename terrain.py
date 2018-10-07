@@ -26,6 +26,8 @@ Layout of the map:
 +-------+-------+-------+
 '''
 
+
+
 class Terrain:
     def __init__(self, width, depth):
         self.width = width
@@ -81,23 +83,23 @@ class Terrain:
                     neighbour = (-10,-10,-10,-10)
                 else:
                     neighbour = self.vertex_height[x-1, y]
-                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.9
-                yield x, y, tile[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.9
-                yield x-1, y, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.9
-                yield x-1, y, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.9
-                yield x-1, y, neighbour[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.9
-                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x, y, tile[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x-1, y, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x-1, y, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x-1, y, neighbour[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.7
 
                 if y == 0:
                     neighbour = (-10,-10,-10,-10)
                 else:
                     neighbour = self.vertex_height[x, y-1]
-                yield x, y, tile[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.7
-                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.7
-                yield x, y-1, neighbour[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.7
-                yield x, y-1, neighbour[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.7
-                yield x, y-1, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.7
-                yield x, y, tile[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.7
+                yield x, y, tile[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y, tile[2], None, u[2], v[2], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y-1, neighbour[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y-1, neighbour[1], None, u[1], v[1], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y-1, neighbour[0], None, u[0], v[0], (0.55, 0.38, 0.2, 1.0), 0.9
+                yield x, y, tile[3], None, u[3], v[3], (0.55, 0.38, 0.2, 1.0), 0.9
 
 
 
@@ -111,11 +113,14 @@ TILE_PARALLEL = 3 # 1100
 TILE_STEEP = 4    # 0121
 TILE_FOLD = 5     # 1010
 
+B = [.65, .60, .70, .75, .95, 1.0, .90, .85]
 shading = {
     TILE_FLAT: [(0.8,0.8)]*4,
-    TILE_ONE_UP: [(1.0, 0.8), (0.7, 0.8), (0.6, 0.8), (0.9, 0.8)],
-    TILE_ONE_DOWN: [(0.6, 0.8), (0.9, 0.8), (1.0, 0.8), (0.7, 0.8)],
-    TILE_PARALLEL: [(0.9,0.9), (0.7, 0.7), (0.6, 0.6), (0.7, 0.7)],
+    TILE_ONE_UP: [(B[2*k-4], 0.8) for k in range(4)],
+    TILE_ONE_DOWN: [(B[2*k], 0.8) for k in range(4)],
+    TILE_PARALLEL: [(B[2*k+1], B[2*k+1]) for k in range(4)],
+    TILE_STEEP: [(B[2*k], B[2*k]) for k in range(4)],
+    TILE_FOLD: [(B[2*k-4], B[2*k]) for k in range(4)]
 }
 
 def tile_shape(tile):
